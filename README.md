@@ -23,6 +23,34 @@ python analysis.py
 ## Results
 Results are written to `results.json` (and a chart to `figures/`).
 
+## Results (latest run)
+
+On 20 Newsgroups (TF-IDF+SVD-128 features), nDCG@10 on held-out queries was 0.522 for a fixed-noise anticorrelated-perturbation Adam (a simplified stand-in for your noise-injected Adam) versus 0.524 for my validation-tuned adaptive-noise variant, a small gain within seed noise.
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.5225 |
+| improved_score | 0.5241 |
+| baseline_score_std | 0.0004432 |
+| improved_score_std | 0.001058 |
+| no_noise_score | 0.5226 |
+| no_noise_score_std | 0.0008448 |
+| improvement | 0.001664 |
+| baseline_mrr | 0.6426 |
+| baseline_recall_at_10 | 0.03388 |
+| improved_mrr | 0.6466 |
+| improved_recall_at_10 | 0.03398 |
+| no_noise_mrr | 0.6421 |
+| no_noise_recall_at_10 | 0.0339 |
+| tuned_noise_scale_s | 21.96 |
+| best_val_ndcg | 0.5275 |
+| fixed_sigma | 0.001 |
+| n_seeds | 3 |
+
+Run on 2026-10-12. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Frozen-encoder stand-in (TF-IDF+SVD) and a linear model, not a transformer; relevance = same category. Seeds 42-44 (3 seeds), not 5. Validation set is disjoint from the 2,000 training docs and from the test pool; the noise-scale search used its own seeds (1,2) and only validation data. The baseline sigma is hand-chosen and untuned, so the improved model also receives a tuning budget the baseline does not; the training step budget is identical. Test queries are the first 1,000 docs of a 3,000-doc test pool, candidates are the pool. Differences may be within seed noise.
+
 ## Reference
 
 This project is motivated by the following paper:

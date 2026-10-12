@@ -1,0 +1,37 @@
+{
+  "question": "Can a validation-tuned, adaptively scaled noise level in Adam beat a hand-chosen fixed anticorrelated-noise Adam at training a small bi-encoder ranker, measured by nDCG@10 on held-out queries?",
+  "method": "Linear bi-encoder on TF-IDF+SVD(128) features of 20 Newsgroups, in-batch contrastive loss, Adam with anticorrelated parameter noise; fixed vs GP-tuned adaptive noise scale.",
+  "dataset": {
+    "name": "20 Newsgroups (TF-IDF + TruncatedSVD 128-d)",
+    "source_url": "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html",
+    "n_rows": 18846,
+    "n_train": 2000,
+    "n_test": 3000,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "nDCG@10",
+  "higher_is_better": true,
+  "baseline": "Adam with anticorrelated Gaussian parameter noise (sigma_t*(xi_t - xi_{t-1})) at a hand-chosen fixed sigma.",
+  "improved": "Same model/loss/steps; noise scale chosen by a GP Bayesian search on validation nDCG@10 and scaled per step by gradient norm (relative to its EMA) and a linear decay.",
+  "metrics": {
+    "baseline_score": 0.522466079777686,
+    "improved_score": 0.5241299273126425,
+    "baseline_score_std": 0.00044317801447576793,
+    "improved_score_std": 0.00105804270416949,
+    "no_noise_score": 0.5225535420171686,
+    "no_noise_score_std": 0.0008448216254409955,
+    "improvement": 0.0016638475349565196,
+    "baseline_mrr": 0.6426025279453849,
+    "baseline_recall_at_10": 0.0338836215663928,
+    "improved_mrr": 0.6465639199072414,
+    "improved_recall_at_10": 0.03398260404884398,
+    "no_noise_mrr": 0.6420747607303813,
+    "no_noise_recall_at_10": 0.03390258717365726,
+    "tuned_noise_scale_s": 21.96385372416547,
+    "best_val_ndcg": 0.5275093873960903,
+    "fixed_sigma": 0.001,
+    "n_seeds": 3
+  },
+  "notes": "Frozen-encoder stand-in (TF-IDF+SVD) and a linear model, not a transformer; relevance = same category. Seeds 42-44 (3 seeds), not 5. Validation set is disjoint from the 2,000 training docs and from the test pool; the noise-scale search used its own seeds (1,2) and only validation data. The baseline sigma is hand-chosen and untuned, so the improved model also receives a tuning budget the baseline does not; the training step budget is identical. Test queries are the first 1,000 docs of a 3,000-doc test pool, candidates are the pool. Differences may be within seed noise."
+}
